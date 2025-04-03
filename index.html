@@ -45,12 +45,21 @@
         appendMessage(question, true);
         inputEl.value = "";
 
-        const response = await fetch(scriptURL, {
-          method: "POST",
-          body: question
-        });
-        const answer = await response.text();
-        appendMessage(answer, false);
+        try {
+          const response = await fetch(scriptURL, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json', // 중요: JSON 형식으로 보내기
+            },
+            body: JSON.stringify({ question: question }) // 요청 본문에 JSON 형태로 질문 보내기
+          });
+
+          const answer = await response.text();
+          appendMessage(answer, false);
+        } catch (error) {
+          console.error("Error:", error);
+          appendMessage("서버 오류가 발생했습니다. 다시 시도해 주세요.", false);
+        }
       }
 
       // 엔터키로 전송 가능하게 하기
