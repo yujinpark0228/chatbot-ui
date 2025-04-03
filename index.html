@@ -1,54 +1,65 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>광고팀 챗봇</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: Arial; max-width: 600px; margin: 0 auto; padding: 20px; }
-    #chatbox { background: #f9f9f9; border: 1px solid #ccc; border-radius: 10px; padding: 15px; height: 400px; overflow-y: auto; display: flex; flex-direction: column; }
-    .user-msg, .bot-msg { margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 75%; }
-    .user-msg { background-color: #d2eaff; align-self: flex-end; }
-    .bot-msg { background-color: #eaeaea; align-self: flex-start; }
-    #input-area { display: flex; margin-top: 12px; gap: 8px; }
-    input { flex: 1; padding: 10px; }
-    button { padding: 10px; }
-  </style>
-</head>
-<body>
-  <h2>광고팀 Q&A 챗봇 🤖</h2>
-  <div id="chatbox"></div>
-  <div id="input-area">
-    <input type="text" id="question" placeholder="무엇이 궁금하신가요?">
-    <button onclick="ask()">전송</button>
-  </div>
+  <head>
+    <meta charset="UTF-8">
+    <title>광고팀 챗봇</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      /* 스타일 그대로 유지 */
+      body { font-family: Arial; max-width: 600px; margin: 0 auto; padding: 20px; }
+      #chatbox { background: #f9f9f9; border: 1px solid #ccc; border-radius: 10px; padding: 15px; height: 400px; overflow-y: auto; display: flex; flex-direction: column; }
+      .user-msg, .bot-msg { margin: 10px 0; padding: 10px; border-radius: 10px; max-width: 75%; }
+      .user-msg { background-color: #d2eaff; align-self: flex-end; }
+      .bot-msg { background-color: #eaeaea; align-self: flex-start; }
+      #input-area { display: flex; margin-top: 12px; gap: 8px; }
+      input { flex: 1; padding: 10px; }
+      button { padding: 10px; }
+    </style>
+  </head>
+  <body>
+    <h2>광고팀 Q&A 챗봇 🤖</h2>
+    <div id="chatbox"></div>
+    <div id="input-area">
+      <input type="text" id="question" placeholder="무엇이 궁금하신가요?">
+      <button onclick="ask()">전송</button>
+    </div>
 
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwHCTGLyw4eTaGAN_2rWSs8BJWgK573pnwTvwy-CrhCrCnJ3mgdS3LvetsWB_mUrXp-/exec"; // 여기 네 Apps Script 웹앱 POST URL 넣기
+    <script>
+      const scriptURL = "https://script.google.com/macros/s/AKfyc.../exec"; // 여기에 Apps Script URL 넣기
 
-    function appendMessage(text, isUser) {
-      const div = document.createElement("div");
-      div.className = isUser ? "user-msg" : "bot-msg";
-      div.textContent = text;
-      document.getElementById("chatbox").appendChild(div);
-      document.getElementById("chatbox").scrollTop = document.getElementById("chatbox").scrollHeight;
-    }
+      // 메시지 추가 함수
+      function appendMessage(text, isUser) {
+        const div = document.createElement("div");
+        div.className = isUser ? "user-msg" : "bot-msg";
+        div.textContent = text;
+        document.getElementById("chatbox").appendChild(div);
+        document.getElementById("chatbox").scrollTop = document.getElementById("chatbox").scrollHeight;
+      }
 
-    async function ask() {
-      const inputEl = document.getElementById("question");
-      const question = inputEl.value.trim();
-      if (!question) return;
+      // 질문 전송 함수
+      async function ask() {
+        const inputEl = document.getElementById("question");
+        const question = inputEl.value.trim();
+        if (!question) return;
 
-      appendMessage(question, true);
-      inputEl.value = "";
+        appendMessage(question, true);
+        inputEl.value = "";
 
-      const response = await fetch(scriptURL, {
-        method: "POST",
-        body: question
+        const response = await fetch(scriptURL, {
+          method: "POST",
+          body: question
+        });
+        const answer = await response.text();
+        appendMessage(answer, false);
+      }
+
+      // 엔터키로 전송 가능하게 하기
+      document.getElementById("question").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          ask();
+        }
       });
-      const answer = await response.text();
-      appendMessage(answer, false);
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
+
